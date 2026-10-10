@@ -105,6 +105,12 @@ input:focus{outline:none;border-color:var(--g)}
 <script>
 const CLK='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 const PHONE="989124525214"; // 09124525214
+const LOG_URL="https://script.google.com/macros/s/AKfycbw_CAChfudJ6Q0r-ovXxeLsM2f_03jip5DbwVdwgL1w37TBhmir4OZEkYTpoVMhmj55XA/exec";
+function logBooking(ch){
+ if(!LOG_URL.startsWith("https://"))return;
+ try{fetch(LOG_URL,{method:"POST",mode:"no-cors",keepalive:true,
+  body:JSON.stringify({name:($("fn").value+" "+$("ln").value).trim(),date:fmt(pick),time:hh(hr)+" – "+hh(hr+1),channel:ch,lang:L})})}catch(e){}
+}
 const T={
 fa:{t1:"رزرو وقت ویزیت",d1:"برای تعیین وقت ملاقات، دکمه زیر را بزنید.",b1:"برای تعیین وقت کلیک کنید",
 t2:"مشخصات شما",d2:"لطفاً نام و نام خانوادگی خود را وارد کنید.",fn:"نام",ln:"نام خانوادگی",b2:"تأیید",
@@ -167,8 +173,8 @@ function drawSlots(){
   b.onclick=()=>{hr=h;summary();show("s4")};sl.appendChild(b)}}
 function msg(){const n=($("fn").value+" "+$("ln").value).trim();return T[L].msg(n,fmt(pick),`${hh(hr)} – ${hh(hr+1)}`)}
 function summary(){if(!pick||hr==null)return;$("sum").innerHTML=msg().split("\n").slice(1,2).join("")}
-$("wa").onclick=()=>window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg())}`,"_blank");
-$("sms").onclick=()=>location.href=`sms:+${PHONE}?&body=${encodeURIComponent(msg())}`;
+$("wa").onclick=()=>{logBooking("whatsapp");window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg())}`,"_blank")};
+$("sms").onclick=()=>{logBooking("sms");location.href=`sms:+${PHONE}?&body=${encodeURIComponent(msg())}`};
 document.querySelectorAll("#lang [data-l]").forEach(b=>b.onclick=()=>{L=b.dataset.l;applyLang();show("s1")});
 $("mini").onclick=()=>{L=L==="fa"?"en":"fa";applyLang()};
 $("go1").onclick=()=>show("s2");
